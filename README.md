@@ -12,7 +12,6 @@
 |---|---|---|
 | **📱 Public Demo (Phones & Any Device)** | **[https://a1553164a0942b.lhr.life](https://a1553164a0942b.lhr.life)** | **Live public HTTPS link** (Works anywhere on mobile/PC!) |
 | **🌐 Local Web Demo** | **[http://localhost:8080](http://localhost:8080)** | On your current laptop (port 8080) |
-| **📁 Direct File Access** | **[file:///c:/Users/lenovo/LedgerFriend/index.html](file:///c:/Users/lenovo/LedgerFriend/index.html)** | Self-contained single-page app (works offline) |
 
 > ⚡ **Quick Test Tip:** Open on any phone or laptop, tap **"⚡ Load Demo Shop"** in the top header to instantly populate a month of realistic business transactions, then view the **3 Final Accounts (Trading, P&L, Balance Sheet)** and run the **AI Accuracy Benchmark**!
 
