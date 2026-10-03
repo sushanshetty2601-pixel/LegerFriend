@@ -11,7 +11,7 @@ The idea is simple: a small-business owner should be able to describe a transact
 
 ## 🔗 Shared Demo
 
-[Demo](https://shimmering-monstera-8631f7.netlify.app/)
+[Demo Link-](https://shimmering-monstera-8631f7.netlify.app/)
 
 This is a shared development demo, not a permanent production deployment. Availability may depend on the development server and tunnel remaining online.
 
