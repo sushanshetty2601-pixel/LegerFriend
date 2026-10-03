@@ -23,7 +23,7 @@ In the original browser-to-Ollama architecture, a request to `localhost` refers 
 
 ## 👤 Who I’m Building For
 
-The intended user is an Indian sole proprietor who finds it difficult to keep everyday transactions organised and translate them into accounting records.
+The intended user is an Indian sole proprietor who is a Friend, Who finds it difficult to keep everyday transactions organised and translate them into accounting records.
 
 I do not want to invent a user testimonial. The project becomes more useful when its design is based on one real person’s workflow.
 
