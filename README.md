@@ -187,8 +187,8 @@ I used AI assistance to explore the idea, generate and revise code, and troubles
 
 Tools used during the development process included:
 
-- **Backboard:** [Add the exact API, agent, model-comparison, or other workflow you actually used.]
-- **Antigravity:** [Add the specific development work you used it for.]
+- **Backboard:**  I used Backboard to create the **initial project structure and HTML foundation** for LedgerFriend. It helped turn the initial concept into the application's page structure, forms, and overall interface layout, which I then developed and refined further.
+- **Antigravity:** I used Antigravity during development for implementation and debugging assistance while testing different approaches and working through application issues.
 - **ChatGPT and Claude:** ideation, implementation guidance, and debugging assistance.
 
 Development assistance is distinct from the application’s runtime dependencies.
