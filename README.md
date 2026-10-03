@@ -1,4 +1,3 @@
-`markdown
 # LedgerFriend
 ### Describe the transaction. Review the entry. Understand your books.
 
