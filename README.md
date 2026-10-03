@@ -25,14 +25,6 @@ In the original browser-to-Ollama architecture, a request to `localhost` refers 
 
 The intended user is an Indian sole proprietor who finds it difficult to keep everyday transactions organised and translate them into accounting records.
 
-Before submitting this project, I will document the actual person I built it for:
-
-- **Friend or family member:** [Name or privacy-preserving description]
-- **Their business:** [Type of business]
-- **Their current bookkeeping process:** [Notebook, spreadsheet, cashbook, etc.]
-- **Their specific difficulty:** [What they actually told me]
-- **What happened when they tried it:** [Actual feedback, or “Not tested yet”]
-
 I do not want to invent a user testimonial. The project becomes more useful when its design is based on one real person’s workflow.
 
 ## 💡 How the Idea Started
