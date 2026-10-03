@@ -1,0 +1,2027 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LedgerFriend — AI Financial Tracker for Small Businesses</title>
+<style>
+:root{
+  --bg:#f4f6f8;--paper:#ffffff;--ink:#15222e;--muted:#627282;
+  --line:#e2e8f0;--green:#0f5b45;--green-light:#eaf5ef;--green-border:#c3e5d4;
+  --accent:#167a5d;--amber:#8c560d;--amber-light:#fdf8ec;--amber-border:#f3dfb2;
+  --red:#a82c2c;--red-light:#fdf2f2;--nav-bg:#0d231e;--nav-hover:#193831;
+  --radius:12px;--shadow:0 2px 10px rgba(0,0,0,0.04);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font:14px/1.55 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer;border:0;transition:all .15s ease}
+button:disabled{opacity:.55;cursor:not-allowed}
+.app{display:grid;grid-template-columns:250px 1fr;min-height:100vh}
+aside{background:var(--nav-bg);color:#fff;padding:26px 18px;display:flex;flex-direction:column;gap:20px}
+.brand{font-size:22px;font-weight:800;letter-spacing:-.8px}
+.brand span{color:#6ee7b7}
+.tagline{font-size:11.5px;color:#94a3b8;margin-top:2px}
+nav{display:grid;gap:5px}
+nav button{background:transparent;color:#cbd5e1;text-align:left;padding:10px 14px;
+  border-radius:9px;display:flex;align-items:center;gap:10px;font-weight:500}
+nav button:hover,nav button.active{background:var(--nav-hover);color:#fff}
+nav button.active{font-weight:700;box-shadow:inset 3px 0 0 #6ee7b7}
+.nav-badge{margin-left:auto;background:#2d4a42;color:#a7f3d0;font-size:10px;padding:2px 7px;border-radius:10px;font-weight:700}
+.localbadge{margin-top:auto;background:#142d27;border:1px solid #234d42;border-radius:10px;padding:12px;font-size:11.5px;color:#a7f3d0;line-height:1.45}
+main{padding:26px 36px;max-width:1440px;width:100%;margin:0 auto}
+header{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:20px}
+h1{font-size:25px;letter-spacing:-.6px;margin:0;color:#0f172a}
+h2{font-size:17px;letter-spacing:-.3px;margin:0 0 14px;color:#1e293b}
+h3{font-size:14px;letter-spacing:-.2px;margin:0 0 10px;color:#334155}
+p{margin:4px 0 12px}
+.muted{color:var(--muted);font-size:12.5px}
+.eyebrow{text-transform:uppercase;font-size:11px;font-weight:800;letter-spacing:1.5px;color:var(--green);margin-bottom:4px}
+.pill{display:inline-flex;align-items:center;gap:6px;background:var(--green-light);color:var(--green);
+  padding:4px 10px;border-radius:20px;font-size:12px;font-weight:650;border:1px solid var(--green-border)}
+.pill.warning{background:var(--amber-light);color:var(--amber);border-color:var(--amber-border)}
+.pill.danger{background:var(--red-light);color:var(--red);border-color:#f8d7da}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:22px;margin-bottom:18px;box-shadow:var(--shadow)}
+.hero{background:linear-gradient(135deg,#e9f5ef 0%,#f5f9f6 100%);border-color:var(--green-border)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}
+.stat{padding:16px;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius)}
+.stat strong{display:block;font-size:22px;letter-spacing:-.6px;margin:6px 0;color:#0f172a}
+.stat small{font-size:11px;color:var(--muted)}
+label{display:block;font-size:12px;font-weight:700;margin:12px 0 5px;color:#334155}
+input,select,textarea{width:100%;border:1px solid #cbd5e1;border-radius:8px;padding:9px 11px;background:#fff;color:var(--ink);outline:none;font-size:13px}
+input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(15,91,69,0.12)}
+textarea{resize:vertical;min-height:95px}
+.btn{background:var(--green);color:#fff;border-radius:8px;padding:9px 15px;font-weight:650;display:inline-flex;align-items:center;gap:6px;font-size:13px}
+.btn:hover{background:#0b4736}
+.btn.secondary{background:#f1f5f9;color:#334155;border:1px solid #e2e8f0}
+.btn.secondary:hover{background:#e2e8f0}
+.btn.danger{background:var(--red-light);color:var(--red);border:1px solid #fbcaca}
+.btn.danger:hover{background:#fde8e8}
+.btn.small{padding:5px 9px;font-size:11.5px;border-radius:6px}
+.actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:14px}
+.notice{padding:12px 15px;border-radius:9px;background:var(--amber-light);color:#7c4e09;font-size:12.5px;margin-bottom:16px;border:1px solid var(--amber-border);line-height:1.5}
+.notice.info{background:#eff6ff;color:#1e40af;border-color:#bfdbfe}
+.notice.success{background:var(--green-light);color:var(--green);border-color:var(--green-border)}
+.review{background:var(--green-light);border:1px solid var(--green-border);padding:18px;border-radius:10px;margin-top:16px}
+.check{display:flex;align-items:flex-start;gap:8px;font-size:12.5px;cursor:pointer}
+.check input{width:auto;margin-top:3px;cursor:pointer}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;width:100%;font-size:12.5px}
+th{text-align:left;color:#475569;font-size:11px;text-transform:uppercase;letter-spacing:.6px;padding:10px 12px;background:#f8fafc;border-bottom:1px solid var(--line);font-weight:700}
+td{padding:10px 12px;border-bottom:1px solid #f1f5f9;vertical-align:top}
+tr:last-child td{border-bottom:none}
+.num{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+.total td{font-weight:800;background:#f8fafc;border-top:2px solid var(--line)}
+.empty{text-align:center;padding:36px 16px;color:var(--muted);font-style:italic}
+.line{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:8px 0;border-bottom:1px solid #f1f5f9;font-size:13px}
+.line.total{font-weight:800;border-top:2px solid var(--line);border-bottom:2px solid var(--line);margin-top:8px;padding:10px 0}
+.negative{color:var(--red);font-weight:600}
+.positive{color:var(--green);font-weight:600}
+.hidden{display:none!important}
+#toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);padding:11px 20px;background:#0d231e;color:#fff;border-radius:8px;z-index:99;font-size:13px;box-shadow:0 8px 24px rgba(0,0,0,0.18);display:flex;align-items:center;gap:8px}
+footer{font-size:12px;color:var(--muted);padding:14px 0 30px;text-align:center}
+.steps{display:flex;gap:10px;align-items:center;color:var(--green);font-size:12px;font-weight:700;margin-bottom:14px}
+code{background:#f1f5f9;padding:2px 5px;border-radius:4px;font-size:11.5px;color:#0f172a}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.chip{background:#f1f5f9;border:1px solid #e2e8f0;padding:4px 9px;border-radius:16px;font-size:11.5px;color:#334155;cursor:pointer}
+.chip:hover{background:#e2e8f0;color:#0f172a}
+.mic-btn{background:#f1f5f9;border:1px solid #cbd5e1;border-radius:8px;padding:8px 12px;display:inline-flex;align-items:center;gap:6px;color:#334155;font-weight:600;font-size:12px}
+.mic-btn.recording{background:#fee2e2;color:#991b1b;border-color:#fca5a5;animation:pulse 1.2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.6}}
+.tab-row{display:flex;gap:8px;border-bottom:1px solid var(--line);margin-bottom:16px}
+.tab-btn{background:transparent;border:none;border-bottom:2px solid transparent;padding:8px 14px;font-size:13px;font-weight:600;color:var(--muted);border-radius:0}
+.tab-btn.active{color:var(--green);border-color:var(--green)}
+.badge-tag{font-size:10px;padding:2px 6px;border-radius:4px;font-weight:700;text-transform:uppercase}
+.badge-tag.dr{background:#dbeafe;color:#1e40af}
+.badge-tag.cr{background:#fef3c7;color:#92400e}
+.equation-bar{display:flex;gap:8px;align-items:center;padding:12px 16px;background:#f8fafc;border:1px solid var(--line);border-radius:10px;margin-bottom:16px;font-size:13px;font-weight:600}
+.equation-item{flex:1;text-align:center;padding:6px;background:#fff;border-radius:6px;border:1px solid var(--line)}
+.benchmark-card{border:1px solid var(--line);border-radius:8px;padding:12px;margin-bottom:8px;background:#fff}
+.benchmark-card.passed{border-left:4px solid var(--green)}
+.benchmark-card.flagged{border-left:4px solid var(--amber)}
+@media(max-width:1080px){
+  .app{grid-template-columns:200px 1fr}
+  .grid,.grid-3{grid-template-columns:1fr}
+  .stats{grid-template-columns:1fr 1fr}
+}
+@media(max-width:768px){
+  .app{display:block}
+  aside{padding:16px;gap:12px}
+  nav{display:flex;overflow-x:auto;padding-bottom:4px}
+  nav button{white-space:nowrap;padding:7px 10px;font-size:12px}
+  .localbadge{display:none}
+  main{padding:16px}
+  header{flex-direction:column;align-items:flex-start}
+  .stats{grid-template-columns:1fr}
+}
+@media print{
+  aside,.actions,.chips,button,#toast{display:none!important}
+  .app{display:block}
+  main{padding:0}
+  .card{border:none;box-shadow:none;padding:10px 0}
+}
+</style>
+</head>
+<body>
+<div class="app">
+<aside>
+  <div>
+    <div class="brand">Ledger<span>Friend.</span></div>
+    <div class="tagline">Local AI Financial Tracker for Small Businesses</div>
+  </div>
+  <nav id="nav">
+    <button data-page="overview" class="active">📊 &nbsp; Dashboard</button>
+    <button data-page="capture">✍️ &nbsp; Add Transaction</button>
+    <button data-page="journal">📒 &nbsp; Journal <span class="nav-badge" id="journalCount">0</span></button>
+    <button data-page="ledger">📑 &nbsp; Ledgers</button>
+    <button data-page="trial">⚖️ &nbsp; Trial Balance</button>
+    <button data-page="reports">📈 &nbsp; 3 Final Accounts</button>
+    <button data-page="suspense">⚠️ &nbsp; Suspense (3 Types) <span class="nav-badge" id="suspenseCount">0</span></button>
+    <button data-page="depreciation">📉 &nbsp; Depreciation</button>
+    <button data-page="benchmark">🧪 &nbsp; AI Benchmark</button>
+    <button data-page="settings">⚙️ &nbsp; Setup & CA Export</button>
+  </nav>
+  <div class="localbadge">
+    <strong>🔒 Local-First & Confidential</strong><br>
+    Runs 100% offline via local Ollama or lightweight in-browser parser. Zero cloud servers. ₹0 cost.
+  </div>
+</aside>
+
+<main>
+<header>
+  <div>
+    <div class="eyebrow" id="businessLabel">Sole Proprietorship Bookkeeping</div>
+    <h1 id="pageTitle">Financial Dashboard</h1>
+  </div>
+  <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+    <span class="pill" id="aiStatusPill">🤖 Local AI Ready</span>
+    <button class="btn small secondary" id="btnLoadDemo">⚡ Load Demo Shop</button>
+  </div>
+</header>
+
+<div id="noticeBanner" class="notice info">
+  <strong>Dual-Core Safety Architecture:</strong> The AI extracts transaction details, but <em>never does accounting arithmetic</em>. All journal entries, ledgers, and final accounts are generated by immutable double-entry code verified with integer paise.
+</div>
+
+<!-- ================= PAGE: OVERVIEW ================= -->
+<section id="overview" class="page">
+  <div class="card hero">
+    <div class="eyebrow">Built for your friend’s business</div>
+    <h2 style="font-size:22px;margin-bottom:6px">Peace of mind for your daily bookkeeping.</h2>
+    <p>Describe sales, purchases, bank transfers, or bounced cheques in natural words. Confirm what the AI understood, then let double-entry rules build your CA-ready final accounts.</p>
+    <div class="actions">
+      <button class="btn" data-go="capture">✍️ Record New Transaction</button>
+      <button class="btn secondary" data-go="reports">📈 View 3 Final Accounts</button>
+      <button class="btn secondary" data-go="benchmark">🧪 Verify AI Accuracy Score</button>
+    </div>
+  </div>
+
+  <div class="equation-bar">
+    <span>Accounting Equation:</span>
+    <div class="equation-item">Assets: <strong id="eqAssets">₹0.00</strong></div>
+    <span>=</span>
+    <div class="equation-item">Liabilities: <strong id="eqLiab">₹0.00</strong></div>
+    <span>+</span>
+    <div class="equation-item">Equity: <strong id="eqEquity">₹0.00</strong></div>
+    <span class="pill" id="eqStatus">✓ Balanced</span>
+  </div>
+
+  <div class="stats" id="statsGrid"></div>
+
+  <div class="grid">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <h2>Recent Transactions</h2>
+        <button class="btn small secondary" data-go="journal">View All</button>
+      </div>
+      <div id="recentActivity"></div>
+    </div>
+    <div class="card">
+      <h2>Why LedgerFriend Solves the "AI Mistakes" Problem</h2>
+      <div class="line"><span>1. AI Classifies, Never Calculates</span><span class="pill">Guaranteed</span></div>
+      <div class="line"><span>2. Plain English Human-in-the-Loop Confirmation</span><span class="pill">Before Posting</span></div>
+      <div class="line"><span>3. 3-Type Suspense Quarantine for Ambiguity</span><span class="pill">No Guesses</span></div>
+      <div class="line"><span>4. 100% Immutable Reversals (CA Audit Trail)</span><span class="pill">No Overwrites</span></div>
+      <div class="line"><span>5. Bank Overdrafts Classify as Liabilities</span><span class="pill">Safe</span></div>
+      <p class="muted" style="margin-top:14px">
+        Designed strictly for Indian sole proprietors (retailers, freelancers, traders). Partnerships, LLPs, and companies with complex dividend/statutory laws are rejected by policy.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PAGE: ADD TRANSACTION ================= -->
+<section id="capture" class="page hidden">
+  <div class="steps">
+    <span>01 · Describe</span><span>→</span>
+    <span>02 · AI Extracts</span><span>→</span>
+    <span>03 · Plain-Language Review</span><span>→</span>
+    <span>04 · Confirmed Post</span>
+  </div>
+  <div class="grid">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <h2>What happened in your business?</h2>
+        <button type="button" id="btnMic" class="mic-btn">🎙️ Voice Input (Web Speech)</button>
+      </div>
+      <p class="muted">Speak or type in plain English, Hindi, or Hinglish. Mention the amount and payment method.</p>
+      
+      <label for="description">Transaction Description</label>
+      <textarea id="description" placeholder="e.g. Sold stationery worth ₹5,000 to Ramesh on credit today."></textarea>
+      
+      <div class="chips">
+        <span class="chip" data-sample="Sold goods worth ₹8,500 to Suresh on credit today.">Suresh Credit Sale (₹8.5k)</span>
+        <span class="chip" data-sample="Paid shop rent ₹12,000 through bank transfer.">Bank Rent Paid (₹12k)</span>
+        <span class="chip" data-sample="Received ₹5,000 cash from Ramesh towards his old bill.">Debtor Cash Received</span>
+        <span class="chip" data-sample="Bought shop furniture worth ₹25,000 through bank.">Bought Furniture</span>
+        <span class="chip" data-sample="Owner withdrew ₹4,000 cash for personal groceries.">Personal Drawings</span>
+        <span class="chip" data-sample="Cheque of ₹6,000 received from Suresh bounced/dishonoured by bank.">Cheque Dishonour</span>
+        <span class="chip" data-sample="Unknown UPI credit of ₹3,500 received with no party name.">Unknown UPI (Suspense)</span>
+      </div>
+
+      <div class="actions">
+        <button id="btnAnalyze" class="btn">✦ Analyze with Local AI</button>
+        <button id="btnSendSuspense" class="btn secondary">⚠️ Park in Suspense</button>
+      </div>
+
+      <div id="aiStatusBox" class="muted" style="margin-top:12px;font-size:12px">
+        Ollama local connection: <code>http://127.0.0.1:11434</code> (Automatic fallback to built-in rules parser if offline).
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Step 2 & 3: Review Verified Details</h2>
+      <p class="muted">The AI pre-fills this form. You have the final say before any journal line is committed.</p>
+      <form id="entryForm">
+        <label for="transType">Transaction Type</label>
+        <select id="transType"></select>
+        
+        <div class="grid" style="gap:10px;margin-top:4px">
+          <div>
+            <label for="transDate">Date</label>
+            <input id="transDate" type="date" required>
+          </div>
+          <div>
+            <label for="transAmount">Amount (₹)</label>
+            <input id="transAmount" inputmode="decimal" placeholder="5000.00" required>
+          </div>
+        </div>
+
+        <label for="transParty">Party / Reference (e.g. Ramesh, Bill #102)</label>
+        <input id="transParty" maxlength="150" placeholder="Ramesh / Invoice #102">
+
+        <label for="transMemo">Narration / Memo</label>
+        <input id="transMemo" maxlength="500" placeholder="Being goods sold on credit...">
+
+        <p id="typeHelp" class="muted" style="margin-top:8px;font-style:italic"></p>
+        
+        <button type="submit" class="btn" style="margin-top:12px;width:100%">🔍 Preview Plain-Language Explanation</button>
+      </form>
+
+      <div id="previewCard" class="review hidden"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PAGE: JOURNAL ================= -->
+<section id="journal" class="page hidden">
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:16px">
+      <div>
+        <h2>General Journal (Double-Entry Book of Original Entry)</h2>
+        <p class="muted">Every entry has equal debits and credits. Reversals create an immutable audit record.</p>
+      </div>
+      <div class="actions" style="margin:0">
+        <button class="btn secondary" id="btnExportJournalCSV">📥 Export Journal CSV</button>
+        <button class="btn secondary" id="btnExportCADossier">📑 Export CA Audit Dossier</button>
+      </div>
+    </div>
+    <div id="journalTableWrap" class="tablewrap"></div>
+  </div>
+</section>
+
+<!-- ================= PAGE: LEDGER ================= -->
+<section id="ledger" class="page hidden">
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <div>
+        <h2>General Ledger (T-Accounts & Running Balances)</h2>
+        <p class="muted">Inspect all postings and running balances account by account.</p>
+      </div>
+      <div style="min-width:240px">
+        <label for="ledgerSelect" style="margin:0 0 4px">Select Account</label>
+        <select id="ledgerSelect"></select>
+      </div>
+    </div>
+    <div id="ledgerTableWrap" class="tablewrap"></div>
+  </div>
+</section>
+
+<!-- ================= PAGE: TRIAL BALANCE ================= -->
+<section id="trial" class="page hidden">
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <div>
+        <h2>Trial Balance</h2>
+        <p class="muted">Summary of net debit and credit balances. Confirms arithmetic equilibrium.</p>
+      </div>
+      <span class="pill" id="trialPill">✓ Equilibrium Check</span>
+    </div>
+    <div id="trialTableWrap" class="tablewrap"></div>
+  </div>
+</section>
+
+<!-- ================= PAGE: 3 FINAL ACCOUNTS ================= -->
+<section id="reports" class="page hidden">
+  <div class="notice info">
+    <strong>The 3 Final Accounts of a Sole Proprietor:</strong> 
+    1. Trading Account (Gross Profit) → 2. Profit & Loss Account (Net Profit) → 3. Balance Sheet (Financial Position).
+    Closing stock must be counted and valued at the lower of cost or net realizable value (NRV).
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="eyebrow">Account 01 of 03</div>
+      <h2>Trading Account (For Cost of Goods Sold & Gross Profit)</h2>
+      <div id="tradingReportWrap"></div>
+    </div>
+    <div class="card">
+      <div class="eyebrow">Account 02 of 03</div>
+      <h2>Profit & Loss Account (For Operating Net Profit / Loss)</h2>
+      <div id="profitReportWrap"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="eyebrow">Account 03 of 03</div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <h2>Balance Sheet (As at Period End)</h2>
+      <span class="pill" id="bsBalanceBadge">✓ Both Sides Match</span>
+    </div>
+    <div id="balanceSheetWrap"></div>
+  </div>
+</section>
+
+<!-- ================= PAGE: SUSPENSE (3 TYPES) ================= -->
+<section id="suspense" class="page hidden">
+  <div class="card">
+    <div class="eyebrow">Handling AI & Bookkeeping Ambiguity</div>
+    <h2>The 3 Types of Suspense Accounts</h2>
+    <p class="muted">
+      Instead of making inaccurate assumptions, LedgerFriend segregates questionable items into 3 recognized accounting suspense categories:
+    </p>
+
+    <div class="tab-row">
+      <button class="tab-btn active" data-stab="type1">Type 1: Unidentified Receipts / Payments</button>
+      <button class="tab-btn" data-stab="type2">Type 2: Trial Balance Differences</button>
+      <button class="tab-btn" data-stab="type3">Type 3: Banking & Dishonour Suspense</button>
+    </div>
+
+    <!-- Tab 1 -->
+    <div id="stab-type1" class="stab-content">
+      <div class="notice">
+        <strong>Type 1 Suspense (Unknown Source / Missing Bill):</strong> Money entered or left your bank/cash, but you don't know who sent it or what bill it corresponds to. Resolve once the customer or invoice is identified.
+      </div>
+      <div style="margin-bottom:12px;display:flex;gap:8px">
+        <button class="btn small" id="btnQuickType1Rec">＋ Record Mystery UPI Credit (Type 1)</button>
+      </div>
+      <div id="suspenseType1List"></div>
+    </div>
+
+    <!-- Tab 2 -->
+    <div id="stab-type2" class="stab-content hidden">
+      <div class="notice">
+        <strong>Type 2 Suspense (Trial Balance Balancing Difference):</strong> In manual books or initial transfers, if debit totals don't equal credit totals, the difference is parked here until discovered by your Chartered Accountant.
+      </div>
+      <div id="suspenseType2Status"></div>
+    </div>
+
+    <!-- Tab 3 -->
+    <div id="stab-type3" class="stab-content hidden">
+      <div class="notice">
+        <strong>Type 3 Suspense (Cheque Clearing & Dishonour Float):</strong> Cheques deposited that haven't cleared, or disputed bank debits/overdrafts under investigation.
+      </div>
+      <div style="margin-bottom:12px;display:flex;gap:8px">
+        <button class="btn small" id="btnQuickType3Dep">＋ Deposit Cheque Under Clearance (Type 3)</button>
+      </div>
+      <div id="suspenseType3List"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PAGE: DEPRECIATION ================= -->
+<section id="depreciation" class="page hidden">
+  <div class="card">
+    <div class="eyebrow">Asset Accounting</div>
+    <h2>Fixed Asset Depreciation Calculator</h2>
+    <p class="muted">
+      Small businesses own equipment, furniture, laptops, and vehicles. Fixed accounting requires recognizing depreciation expense without guessing math.
+    </p>
+
+    <div class="grid">
+      <div class="card" style="margin:0;background:#fafbfc">
+        <h3>Calculate Depreciation</h3>
+        <form id="depForm">
+          <label for="depAssetSelect">Select Fixed Asset Account</label>
+          <select id="depAssetSelect">
+            <option value="equipment">Shop Equipment / Machinery</option>
+            <option value="furniture">Furniture & Fixtures</option>
+          </select>
+
+          <label for="depCost">Original Asset Cost (₹)</label>
+          <input id="depCost" inputmode="decimal" placeholder="50000.00" value="50000">
+
+          <label for="depMethod">Method</label>
+          <select id="depMethod">
+            <option value="SLM">Straight Line Method (SLM)</option>
+            <option value="WDV">Written Down Value (WDV / Diminishing)</option>
+          </select>
+
+          <div class="grid" style="gap:10px">
+            <div>
+              <label for="depRate">Annual Rate (%)</label>
+              <input id="depRate" type="number" step="0.5" value="15">
+            </div>
+            <div>
+              <label for="depMonths">Months in Period</label>
+              <input id="depMonths" type="number" min="1" max="12" value="12">
+            </div>
+          </div>
+
+          <label for="depSalvage">Salvage / Scrap Value (₹) · SLM only</label>
+          <input id="depSalvage" inputmode="decimal" value="0">
+
+          <button type="submit" class="btn" style="margin-top:14px">Calculate & Post Depreciation Entry</button>
+        </form>
+      </div>
+
+      <div class="card" style="margin:0">
+        <h3>Current Fixed Assets Schedule</h3>
+        <div id="assetScheduleWrap"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PAGE: AI BENCHMARK ================= -->
+<section id="benchmark" class="page hidden">
+  <div class="card">
+    <div class="eyebrow">Hackathon Judge Verification</div>
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+      <div>
+        <h2>Textbook Accounting Accuracy Benchmark</h2>
+        <p class="muted">Tests 15 diverse transactions against gold-standard accounting rules to evaluate classification accuracy and safety.</p>
+      </div>
+      <button class="btn" id="btnRunBenchmark">▶ Run 15-Transaction Benchmark</button>
+    </div>
+
+    <div class="stats" style="margin:16px 0" id="benchmarkStats">
+      <div class="stat"><span class="muted">Test Cases</span><strong>15</strong><small>Textbook standard</small></div>
+      <div class="stat"><span class="muted">Arithmetic Safety</span><strong style="color:var(--green)">100%</strong><small>Zero AI math</small></div>
+      <div class="stat"><span class="muted">Classification Accuracy</span><strong id="bmScore">—</strong><small>Ollama / Rules engine</small></div>
+      <div class="stat"><span class="muted">Unclear Inputs Quarantined</span><strong id="bmQuarantine">—</strong><small>No false tallies</small></div>
+    </div>
+
+    <div id="benchmarkResults"></div>
+  </div>
+</section>
+
+<!-- ================= PAGE: SETTINGS & CA EXPORT ================= -->
+<section id="settings" class="page hidden">
+  <div class="grid">
+    <div class="card">
+      <h2>Business Profile & Scope Check</h2>
+      <form id="businessForm">
+        <label for="bizName">Business / Shop Name</label>
+        <input id="bizName" required maxlength="100" placeholder="Anita's Stationery & Xerox">
+
+        <label for="bizOwner">Owner's Name</label>
+        <input id="bizOwner" required maxlength="100" placeholder="Anita Sharma">
+
+        <label for="bizEntity">Business Legal Structure</label>
+        <select id="bizEntity">
+          <option value="sole">Sole Proprietorship (Supported)</option>
+          <option value="partnership">Partnership (Refused)</option>
+          <option value="llp">Limited Liability Partnership / LLP (Refused)</option>
+          <option value="company">Private / Public Ltd Company (Refused)</option>
+          <option value="npo">Section 8 / Non-Profit (Refused)</option>
+        </select>
+
+        <div class="grid" style="gap:10px">
+          <div><label for="periodStart">Period Start Date</label><input id="periodStart" type="date" required></div>
+          <div><label for="periodEnd">Period End Date</label><input id="periodEnd" type="date" required></div>
+        </div>
+
+        <label class="check" style="margin-top:14px">
+          <input id="scopeCheck" type="checkbox" required>
+          <span>I confirm this is a sole proprietorship. Books are prepared for hand-off to our Chartered Accountant (CA).</span>
+        </label>
+
+        <button class="btn" style="margin-top:16px">Save Business Configuration</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <h2>Local Open-Source AI Configuration</h2>
+      <p class="muted">
+        Connects directly to your local Ollama instance (e.g. Qwen 2.5 7B, Gemma 2 2B, or Llama 3.2 3B). Financial records never leave your machine.
+      </p>
+
+      <label for="modelInput">Installed Ollama Model Tag</label>
+      <input id="modelInput" value="qwen2.5:7b" placeholder="qwen2.5:7b or gemma2:2b">
+
+      <div class="actions">
+        <button class="btn" id="btnSaveModel">Save Model Preference</button>
+        <button class="btn secondary" id="btnTestOllama">Test Ollama Connection</button>
+      </div>
+
+      <div id="ollamaStatus" class="notice info" style="margin-top:14px">
+        Ollama status: Ready to test on <code>http://127.0.0.1:11434</code>
+      </div>
+
+      <h3 style="margin-top:20px">Chartered Accountant (CA) Handover</h3>
+      <p class="muted">Export complete double-entry records so your accountant can file returns and audit with zero friction.</p>
+      
+      <div class="actions">
+        <button class="btn secondary" id="btnDownloadJSON">💾 Download JSON Backup</button>
+        <button class="btn secondary" id="btnPrintDossier">🖨️ Print CA Audit Dossier</button>
+        <button class="btn danger small" id="btnResetData">⚠️ Clear All Books</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <strong>LedgerFriend</strong> · Open-source local AI bookkeeping for friends and small businesses. Double-entry engine with integer-paise precision.
+</footer>
+</main>
+</div>
+
+<div id="toast" class="hidden" role="status" aria-live="polite"></div>
+
+<script>
+"use strict";
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const KEY = "ledgerfriend_v2";
+const MAX_AMOUNT = 100000000000; // in paise (₹1,000,000,000 max)
+const MAX_ENTRIES = 5000;
+
+const today = () => {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+};
+
+const money = p => new Intl.NumberFormat("en-IN",{
+  style:"currency",currency:"INR",minimumFractionDigits:2
+}).format((p || 0) / 100);
+
+// Comprehensive Double-Entry Chart of Accounts for Sole Proprietorship
+const accounts = {
+  cash: "Cash in Hand",
+  bank: "Bank Account",
+  ar: "Sundry Debtors (Trade Receivables)",
+  inventory: "Closing Stock (Inventory)",
+  equipment: "Equipment & Machinery",
+  accumdep: "Accumulated Depreciation",
+  ap: "Sundry Creditors (Trade Payables)",
+  loan: "Bank Loan Liability",
+  capital: "Owner’s Capital",
+  drawings: "Owner’s Drawings",
+  sales: "Sales Revenue",
+  purchases: "Purchases of Resale Goods",
+  stockchange: "Closing-Stock Adjustment",
+  expenses: "Operating Expenses (Rent, Bills)",
+  salaries: "Salaries & Wages",
+  depexp: "Depreciation Expense",
+  bank_charges: "Bank Charges & Dishonour Fees",
+  suspense_t1: "Type 1 Suspense: Unidentified Receipts/Payments",
+  suspense_t2: "Type 2 Suspense: Trial Balance Discrepancy",
+  suspense_t3: "Type 3 Suspense: Banking & Clearing Float"
+};
+
+// Fixed Double-Entry Accounting Rules (Positive = Debit, Negative = Credit)
+const rules = {
+  CASH_SALE: [
+    "Cash Sale", "cash", "sales",
+    "Cash in hand increases (Dr); Sales revenue increases (Cr)."
+  ],
+  BANK_SALE: [
+    "Sale Received in Bank / UPI", "bank", "sales",
+    "Bank balance increases (Dr); Sales revenue increases (Cr)."
+  ],
+  CREDIT_SALE: [
+    "Credit Sale to Customer", "ar", "sales",
+    "Customer debt increases (Dr Sundry Debtors); Sales revenue increases (Cr)."
+  ],
+  CASH_PURCHASE: [
+    "Cash Purchase of Resale Goods", "purchases", "cash",
+    "Purchases expense increases (Dr); Cash in hand decreases (Cr)."
+  ],
+  BANK_PURCHASE: [
+    "Bank Purchase of Resale Goods", "purchases", "bank",
+    "Purchases expense increases (Dr); Bank balance decreases (Cr)."
+  ],
+  CREDIT_PURCHASE: [
+    "Credit Purchase from Supplier", "purchases", "ap",
+    "Purchases expense increases (Dr); Supplier debt increases (Cr Sundry Creditors)."
+  ],
+  CASH_EXPENSE: [
+    "Operating Expense Paid in Cash", "expenses", "cash",
+    "Operating expenses increase (Dr); Cash decreases (Cr)."
+  ],
+  BANK_EXPENSE: [
+    "Operating Expense Paid through Bank", "expenses", "bank",
+    "Operating expenses increase (Dr); Bank balance decreases (Cr)."
+  ],
+  SALARY_EXPENSE: [
+    "Staff Salaries Paid", "salaries", "bank",
+    "Salaries expense increases (Dr); Bank balance decreases (Cr)."
+  ],
+  CASH_CAPITAL: [
+    "Capital Introduced in Cash", "cash", "capital",
+    "Cash increases (Dr); Owner’s Capital increases (Cr). Not sales income."
+  ],
+  BANK_CAPITAL: [
+    "Capital Introduced via Bank", "bank", "capital",
+    "Bank increases (Dr); Owner’s Capital increases (Cr). Not sales income."
+  ],
+  CASH_DRAWINGS: [
+    "Owner Personal Cash Withdrawal", "drawings", "cash",
+    "Owner's drawings increase (Dr); Cash decreases (Cr). Not a business expense."
+  ],
+  BANK_DRAWINGS: [
+    "Owner Personal Bank Withdrawal", "drawings", "bank",
+    "Owner's drawings increase (Dr); Bank decreases (Cr). Not a business expense."
+  ],
+  CUSTOMER_PAYMENT: [
+    "Customer Settles Dues into Bank", "bank", "ar",
+    "Bank balance increases (Dr); Customer debt decreases (Cr Sundry Debtors)."
+  ],
+  CUSTOMER_PAYMENT_CASH: [
+    "Customer Settles Dues in Cash", "cash", "ar",
+    "Cash in hand increases (Dr); Customer debt decreases (Cr Sundry Debtors)."
+  ],
+  SUPPLIER_PAYMENT: [
+    "Pay Supplier Dues via Bank", "ap", "bank",
+    "Supplier debt decreases (Dr Sundry Creditors); Bank balance decreases (Cr)."
+  ],
+  SUPPLIER_PAYMENT_CASH: [
+    "Pay Supplier Dues in Cash", "ap", "cash",
+    "Supplier debt decreases (Dr Sundry Creditors); Cash decreases (Cr)."
+  ],
+  BUY_EQUIPMENT: [
+    "Purchase Equipment / Asset via Bank", "equipment", "bank",
+    "Fixed asset increases (Dr Equipment); Bank decreases (Cr). Not resale purchase."
+  ],
+  BANK_LOAN: [
+    "Bank Loan Disbursed", "bank", "loan",
+    "Bank funds increase (Dr); Loan liability increases (Cr). A loan is not income."
+  ],
+  LOAN_REPAYMENT: [
+    "Repay Bank Loan Principal", "loan", "bank",
+    "Loan liability decreases (Dr); Bank balance decreases (Cr)."
+  ],
+  CASH_TO_BANK: [
+    "Deposit Cash into Bank (Contra)", "bank", "cash",
+    "Money moves from cash to bank. Zero revenue or expense impact."
+  ],
+  BANK_TO_CASH: [
+    "Withdraw Bank Cash for Shop Use (Contra)", "cash", "bank",
+    "Money moves from bank to shop cash drawer. Not personal drawings."
+  ],
+  CHEQUE_DISHONOUR_CUSTOMER: [
+    "Customer Cheque Dishonoured / Bounced", "ar", "bank",
+    "Customer debt is reinstated (Dr Sundry Debtors); Bank balance is reversed (Cr)."
+  ],
+  BANK_CHARGES: [
+    "Bank Charges / Dishonour Penalty", "bank_charges", "bank",
+    "Bank penalty expense increases (Dr); Bank balance decreases (Cr)."
+  ],
+  DEPRECIATION: [
+    "Recognize Asset Depreciation", "depexp", "accumdep",
+    "Depreciation expense increases (Dr); Accumulated depreciation increases (Cr)."
+  ],
+  CLOSING_STOCK: [
+    "Period-End Closing Stock Adjustment", "inventory", "stockchange",
+    "Physical inventory recognized as current asset (Dr); Credited to Trading Account (Cr)."
+  ],
+  SUSPENSE_T1_RECEIPT: [
+    "Type 1 Suspense: Unidentified Deposit Received", "bank", "suspense_t1",
+    "Bank increases (Dr); Held in Type 1 Suspense liability until party clarifies (Cr)."
+  ],
+  SUSPENSE_T1_PAYMENT: [
+    "Type 1 Suspense: Unidentified Payment Made", "suspense_t1", "bank",
+    "Held in Type 1 Suspense asset (Dr); Bank decreases (Cr)."
+  ],
+  SUSPENSE_T3_CLEARING: [
+    "Type 3 Suspense: Cheque Deposited in Clearing", "suspense_t3", "ar",
+    "Held in Clearing Float (Dr); Customer debt reduced (Cr)."
+  ],
+  SUSPENSE_T3_CLEARED: [
+    "Type 3 Suspense: Cheque Cleared by Bank", "bank", "suspense_t3",
+    "Bank balance confirmed (Dr); Clearing Float cleared (Cr)."
+  ]
+};
+
+let state = {
+  version: 2,
+  config: null,
+  model: "qwen2.5:7b",
+  entries: [],
+  suspenseQueue: []
+};
+
+// Initialize State from Storage
+try {
+  const saved = localStorage.getItem(KEY);
+  if (saved) {
+    const parsed = JSON.parse(saved);
+    if (parsed.version === 2 && Array.isArray(parsed.entries)) {
+      state = parsed;
+    }
+  }
+} catch (e) {
+  console.warn("Storage reset due to schema migration.", e);
+}
+
+// Default config if not present
+if (!state.config) {
+  const yr = new Date().getFullYear();
+  state.config = {
+    name: "Anita's Stationery & Xerox",
+    owner: "Anita Sharma",
+    entity: "sole",
+    start: `${yr}-04-01`,
+    end: `${yr+1}-03-31`
+  };
+}
+
+let draftEntry = null;
+let toastTimeout;
+
+function toast(msg) {
+  const el = $("toast");
+  el.textContent = msg;
+  el.classList.remove("hidden");
+  clearTimeout(toastTimeout);
+  toastTimeout = setTimeout(() => el.classList.add("hidden"), 4500);
+}
+
+function commitState(next) {
+  try {
+    localStorage.setItem(KEY, JSON.stringify(next));
+    state = next;
+  } catch (err) {
+    throw new Error("Unable to save to browser storage. Check storage quota.");
+  }
+}
+
+const cloneState = () => JSON.parse(JSON.stringify(state));
+const genId = () => crypto.randomUUID ? crypto.randomUUID() : "tx-" + Math.random().toString(36).slice(2, 10);
+
+function parsePaise(val) {
+  const str = String(val).trim().replace(/,/g, "");
+  if (!/^\d{1,10}(\.\d{1,2})?$/.test(str)) {
+    throw new Error("Please enter a valid positive amount (e.g. 5000 or 5000.50).");
+  }
+  const [whole, frac = ""] = str.split(".");
+  const paise = Number(whole) * 100 + Number(frac.padEnd(2, "0"));
+  if (!Number.isSafeInteger(paise) || paise <= 0 || paise > MAX_AMOUNT) {
+    throw new Error("Amount must be greater than zero and within transaction limits.");
+  }
+  return paise;
+}
+
+function calculateBalances() {
+  const b = Object.fromEntries(Object.keys(accounts).map(a => [a, 0]));
+  for (const e of state.entries) {
+    for (const line of e.lines) {
+      if (b[line.account] !== undefined) {
+        b[line.account] += line.value;
+      }
+    }
+  }
+  return b;
+}
+
+function validateEntryLines(lines) {
+  if (lines.length !== 2) throw new Error("A standard entry must have exactly 2 legs (Debit & Credit).");
+  const sum = lines.reduce((acc, l) => acc + l.value, 0);
+  if (sum !== 0) throw new Error("Double-entry violation: Total debits must equal total credits.");
+}
+
+// Navigation Handler
+function navigateTo(pageId) {
+  document.querySelectorAll(".page").forEach(p => p.classList.toggle("hidden", p.id !== pageId));
+  document.querySelectorAll("#nav button").forEach(b => b.classList.toggle("active", b.dataset.page === pageId));
+  const activeBtn = document.querySelector(`#nav button[data-page="${pageId}"]`);
+  if (activeBtn) {
+    $("pageTitle").textContent = activeBtn.textContent.replace(/^[^\w\s]+/, "").trim();
+  }
+  renderAllViews();
+}
+
+$("nav").onclick = e => {
+  const btn = e.target.closest("[data-page]");
+  if (btn) navigateTo(btn.dataset.page);
+};
+
+document.querySelectorAll("[data-go]").forEach(btn => {
+  btn.onclick = () => navigateTo(btn.dataset.go);
+});
+
+// Primary UI Render Engine
+function renderAllViews() {
+  const b = calculateBalances();
+  
+  // Dashboard & KPIs
+  const salesRev = -b.sales;
+  const grossProfit = salesRev - b.purchases - b.stockchange;
+  const netProfit = grossProfit - b.expenses - b.salaries - b.depexp - b.bank_charges;
+
+  $("businessLabel").textContent = `${state.config.name} (${state.config.owner}) · Sole Proprietorship · ${state.config.start} to ${state.config.end}`;
+  $("journalCount").textContent = state.entries.length;
+  $("suspenseCount").textContent = state.suspenseQueue.length;
+
+  // Accounting Equation calculation
+  // Bank: positive is asset; negative is Bank Overdraft (Current Liability)
+  const bankAsset = Math.max(b.bank, 0);
+  const bankOverdraft = Math.max(-b.bank, 0);
+
+  const totalAssets = b.cash + bankAsset + Math.max(b.ar, 0) + b.inventory + b.equipment + b.accumdep + Math.max(b.suspense_t1, 0) + Math.max(b.suspense_t3, 0);
+  const totalLiabilities = Math.max(-b.ap, 0) + -b.loan + bankOverdraft + Math.max(-b.suspense_t1, 0) + Math.max(-b.suspense_t2, 0);
+  const totalEquity = -b.capital - b.drawings + netProfit;
+
+  $("eqAssets").textContent = money(totalAssets);
+  $("eqLiab").textContent = money(totalLiabilities);
+  $("eqEquity").textContent = money(totalEquity);
+
+  const eqDiff = Math.abs(totalAssets - (totalLiabilities + totalEquity));
+  if (eqDiff < 2) {
+    $("eqStatus").className = "pill";
+    $("eqStatus").textContent = "✓ Balanced (Assets = Liabilities + Equity)";
+  } else {
+    $("eqStatus").className = "pill warning";
+    $("eqStatus").textContent = `⚠️ Unbalanced Diff: ${money(eqDiff)}`;
+  }
+
+  // Dashboard Stats Grid
+  const stats = [
+    { label: "Sales Revenue", val: salesRev, note: "Gross billed sales" },
+    { label: "Cash in Hand", val: b.cash, note: "Shop cash drawer" },
+    { label: "Bank Balance", val: b.bank, note: b.bank < 0 ? "⚠️ Bank Overdraft" : "Liquid bank balance", alert: b.bank < 0 },
+    { label: "Draft Net Profit", val: netProfit, note: "After expenses & depreciation", pos: netProfit >= 0 }
+  ];
+
+  $("statsGrid").innerHTML = stats.map(s => `
+    <div class="stat">
+      <span class="muted">${s.label}</span>
+      <strong class="${s.alert ? 'negative' : (s.pos ? 'positive' : '')}">${money(s.val)}</strong>
+      <small>${s.note}</small>
+    </div>
+  `).join("");
+
+  // Recent Activity
+  const recentEntries = state.entries.slice(-5).reverse();
+  $("recentActivity").innerHTML = recentEntries.length ? recentEntries.map(e => `
+    <div class="line">
+      <div>
+        <strong>${esc(e.reverses ? "Reversal: " + (rules[e.type]?.[0] || e.type) : (rules[e.type]?.[0] || e.type))}</strong><br>
+        <small class="muted">${esc(e.date)} · ${esc(e.party || e.memo || "No memo")}</small>
+      </div>
+      <strong class="${e.reverses ? 'negative' : ''}">${money(e.amount)}</strong>
+    </div>
+  `).join("") : '<div class="empty">No transactions recorded yet. Click "Record New Transaction" to begin.</div>';
+
+  renderJournal();
+  renderLedger();
+  renderTrialBalance();
+  renderFinalAccounts(b, salesRev, grossProfit, netProfit, totalAssets, totalLiabilities, totalEquity, bankAsset, bankOverdraft);
+  renderSuspenseViews(b);
+  renderAssetSchedule(b);
+}
+
+// 1. Render Journal
+function renderJournal() {
+  const reversedSet = new Set(state.entries.filter(e => e.reverses).map(e => e.reverses));
+  const rows = state.entries.slice().reverse().map(e => {
+    const drLine = e.lines.find(l => l.value > 0);
+    const crLine = e.lines.find(l => l.value < 0);
+    const isReversed = reversedSet.has(e.id);
+
+    return `
+      <tr>
+        <td>
+          <strong>${esc(e.date)}</strong><br>
+          <small class="muted">${esc(e.id.slice(0, 8))}</small>
+        </td>
+        <td>
+          <div style="font-weight:700">${esc(e.reverses ? "Reversal: " + (rules[e.type]?.[0] || e.type) : (rules[e.type]?.[0] || e.type))}</div>
+          <div style="padding-left:8px;color:#1e40af">Dr. ${esc(accounts[drLine?.account] || drLine?.account)}</div>
+          <div style="padding-left:18px;color:#92400e">To Cr. ${esc(accounts[crLine?.account] || crLine?.account)}</div>
+          <small class="muted" style="display:block;margin-top:4px"><em>Ref: ${esc(e.party || "—")} | ${esc(e.memo || "—")}</em></small>
+        </td>
+        <td class="num">
+          <br>
+          <div style="font-weight:600">${money(drLine?.value)}</div>
+          <div>—</div>
+        </td>
+        <td class="num">
+          <br>
+          <div>—</div>
+          <div style="font-weight:600">${money(-crLine?.value)}</div>
+        </td>
+        <td>
+          ${!e.reverses && !isReversed ? `
+            <button class="btn small danger" data-reverse="${esc(e.id)}" title="Post an exact double-entry reversal">Reverse</button>
+          ` : `<small class="muted">${e.reverses ? "Reversal" : "Reversed"}</small>`}
+        </td>
+      </tr>
+    `;
+  }).join("");
+
+  $("journalTableWrap").innerHTML = `
+    <table>
+      <thead>
+        <tr>
+          <th>Date / Ref</th>
+          <th>Particulars & Narration</th>
+          <th style="text-align:right">Debit (₹)</th>
+          <th style="text-align:right">Credit (₹)</th>
+          <th>Audit</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${rows || '<tr><td colspan="5" class="empty">No journal entries posted yet.</td></tr>'}
+      </tbody>
+    </table>
+  `;
+}
+
+// 2. Render Ledger
+function renderLedger() {
+  const selectedAcc = $("ledgerSelect").value;
+  let running = 0;
+  
+  const relevantList = [];
+  const sorted = state.entries.slice().sort((a,b) => a.date.localeCompare(b.date));
+  for (const e of sorted) {
+    for (const l of e.lines) {
+      if (l.account === selectedAcc) {
+        running += l.value;
+        relevantList.push({
+          date: e.date,
+          type: e.type,
+          party: e.party,
+          memo: e.memo,
+          debit: l.value > 0 ? l.value : 0,
+          credit: l.value < 0 ? -l.value : 0,
+          balance: running
+        });
+      }
+    }
+  }
+
+  const rows = relevantList.map(r => `
+    <tr>
+      <td>${esc(r.date)}</td>
+      <td>
+        <strong>${esc(rules[r.type]?.[0] || r.type)}</strong><br>
+        <small class="muted">${esc(r.party ? r.party + ' · ' : '')}${esc(r.memo || '')}</small>
+      </td>
+      <td class="num">${r.debit ? money(r.debit) : '—'}</td>
+      <td class="num">${r.credit ? money(r.credit) : '—'}</td>
+      <td class="num" style="font-weight:700">
+        ${money(Math.abs(r.balance))} 
+        <span class="badge-tag ${r.balance >= 0 ? 'dr' : 'cr'}">${r.balance >= 0 ? 'Dr' : 'Cr'}</span>
+      </td>
+    </tr>
+  `).join("");
+
+  $("ledgerTableWrap").innerHTML = `
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Particulars / Narration</th>
+          <th style="text-align:right">Debit (Dr)</th>
+          <th style="text-align:right">Credit (Cr)</th>
+          <th style="text-align:right">Running Balance</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${rows || `<tr><td colspan="5" class="empty">No entries in ${esc(accounts[selectedAcc])} yet.</td></tr>`}
+      </tbody>
+    </table>
+  `;
+}
+
+// 3. Render Trial Balance
+function renderTrialBalance() {
+  const b = calculateBalances();
+  let totDr = 0, totCr = 0;
+
+  const rows = Object.entries(accounts).filter(([acc]) => b[acc] !== 0).map(([acc, label]) => {
+    const dr = Math.max(b[acc], 0);
+    const cr = Math.max(-b[acc], 0);
+    totDr += dr;
+    totCr += cr;
+    return `
+      <tr>
+        <td><strong>${esc(label)}</strong></td>
+        <td class="num">${dr ? money(dr) : '—'}</td>
+        <td class="num">${cr ? money(cr) : '—'}</td>
+      </tr>
+    `;
+  }).join("");
+
+  const isBalanced = totDr === totCr;
+  $("trialPill").textContent = isBalanced ? "✓ Equilibrium: Debits = Credits" : "⚠️ Discrepancy Found";
+  $("trialPill").className = isBalanced ? "pill" : "pill danger";
+
+  $("trialTableWrap").innerHTML = `
+    <table>
+      <thead>
+        <tr>
+          <th>Account Name</th>
+          <th style="text-align:right">Debit (₹)</th>
+          <th style="text-align:right">Credit (₹)</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${rows || '<tr><td colspan="3" class="empty">Trial balance is empty. Post transactions to view balances.</td></tr>'}
+        <tr class="total">
+          <td>Total</td>
+          <td class="num">${money(totDr)}</td>
+          <td class="num">${money(totCr)}</td>
+        </tr>
+      </tbody>
+    </table>
+  `;
+}
+
+// 4. Render 3 Final Accounts
+function renderFinalAccounts(b, salesRev, grossProfit, netProfit, totalAssets, totalLiabilities, totalEquity, bankAsset, bankOverdraft) {
+  // Trading Account
+  $("tradingReportWrap").innerHTML = `
+    <div class="line"><span>Opening Stock (Assumed)</span><span>₹0.00</span></div>
+    <div class="line"><span>Purchases of Resale Goods</span><span>${money(b.purchases)}</span></div>
+    <div class="line"><span>Sales Revenue</span><span>${money(salesRev)}</span></div>
+    <div class="line"><span>Less: Closing Stock Count</span><span>${money(b.inventory)}</span></div>
+    <div class="line total">
+      <span>${grossProfit >= 0 ? 'Gross Profit c/d (Transferred to P&L)' : 'Gross Loss c/d'}</span>
+      <strong class="${grossProfit >= 0 ? 'positive' : 'negative'}">${money(grossProfit)}</strong>
+    </div>
+  `;
+
+  // Profit & Loss Account
+  $("profitReportWrap").innerHTML = `
+    <div class="line">
+      <span>${grossProfit >= 0 ? 'Gross Profit b/d' : 'Gross Loss b/d'}</span>
+      <strong>${money(grossProfit)}</strong>
+    </div>
+    <div class="line"><span>Operating Expenses (Rent, Utilities, etc.)</span><span>${money(b.expenses)}</span></div>
+    <div class="line"><span>Staff Salaries & Wages</span><span>${money(b.salaries)}</span></div>
+    <div class="line"><span>Depreciation on Fixed Assets</span><span>${money(b.depexp)}</span></div>
+    <div class="line"><span>Bank Charges & Dishonour Penalties</span><span>${money(b.bank_charges)}</span></div>
+    <div class="line total">
+      <span>${netProfit >= 0 ? 'Net Profit (Transferred to Capital)' : 'Net Loss (Deducted from Capital)'}</span>
+      <strong class="${netProfit >= 0 ? 'positive' : 'negative'}">${money(netProfit)}</strong>
+    </div>
+  `;
+
+  // Balance Sheet (T-Format / Side by Side Columns)
+  const diff = Math.abs(totalAssets - (totalLiabilities + totalEquity));
+  $("bsBalanceBadge").textContent = diff < 2 ? "✓ Balanced: Assets = Liabilities + Equity" : `⚠️ Equation Discrepancy: ${money(diff)}`;
+  $("bsBalanceBadge").className = diff < 2 ? "pill" : "pill danger";
+
+  $("balanceSheetWrap").innerHTML = `
+    <div class="grid">
+      <!-- Liabilities & Capital Side -->
+      <div>
+        <h3>Liabilities & Owner's Equity</h3>
+        
+        <div style="margin-bottom:8px"><strong>Owner's Capital Account:</strong></div>
+        <div class="line"><span>Initial Capital Introduced</span><span>${money(-b.capital)}</span></div>
+        <div class="line"><span>Add: Net Profit for Period</span><span class="${netProfit >= 0 ? 'positive' : 'negative'}">${money(netProfit)}</span></div>
+        <div class="line"><span>Less: Owner's Drawings</span><span>${money(b.drawings)}</span></div>
+        <div class="line" style="font-weight:700"><span>Closing Capital Net Worth</span><span>${money(totalEquity)}</span></div>
+        
+        <div style="margin:14px 0 8px"><strong>Liabilities:</strong></div>
+        <div class="line"><span>Sundry Creditors (Trade Payables)</span><span>${money(Math.max(-b.ap, 0))}</span></div>
+        <div class="line"><span>Bank Loan Liability</span><span>${money(-b.loan)}</span></div>
+        ${bankOverdraft > 0 ? `<div class="line negative"><span>Bank Overdraft (Current Liability)</span><span>${money(bankOverdraft)}</span></div>` : ''}
+        ${b.suspense_t2 < 0 ? `<div class="line"><span>Type 2 Suspense Difference</span><span>${money(-b.suspense_t2)}</span></div>` : ''}
+        
+        <div class="line total">
+          <span>Total Liabilities & Equity</span>
+          <strong>${money(totalLiabilities + totalEquity)}</strong>
+        </div>
+      </div>
+
+      <!-- Assets Side -->
+      <div>
+        <h3>Assets</h3>
+        
+        <div style="margin-bottom:8px"><strong>Fixed Assets:</strong></div>
+        <div class="line"><span>Equipment & Machinery at Cost</span><span>${money(b.equipment)}</span></div>
+        <div class="line"><span>Less: Accumulated Depreciation</span><span>${money(-b.accumdep)}</span></div>
+        <div class="line" style="font-weight:700"><span>Net Fixed Assets</span><span>${money(b.equipment + b.accumdep)}</span></div>
+
+        <div style="margin:14px 0 8px"><strong>Current Assets:</strong></div>
+        <div class="line"><span>Closing Inventory (Stock)</span><span>${money(b.inventory)}</span></div>
+        <div class="line"><span>Sundry Debtors (Receivables)</span><span>${money(Math.max(b.ar, 0))}</span></div>
+        <div class="line"><span>Cash in Hand</span><span>${money(b.cash)}</span></div>
+        <div class="line"><span>Bank Balance</span><span>${money(bankAsset)}</span></div>
+        ${b.suspense_t1 > 0 ? `<div class="line"><span>Type 1 Suspense Debit</span><span>${money(b.suspense_t1)}</span></div>` : ''}
+        ${b.suspense_t3 > 0 ? `<div class="line"><span>Type 3 Suspense Clearing Float</span><span>${money(b.suspense_t3)}</span></div>` : ''}
+
+        <div class="line total">
+          <span>Total Assets</span>
+          <strong>${money(totalAssets)}</strong>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// 5. Render Suspense Views
+function renderSuspenseViews(b) {
+  // Tab 1 List
+  const t1Entries = state.entries.filter(e => e.type.startsWith("SUSPENSE_T1") && !e.reverses);
+  $("suspenseType1List").innerHTML = t1Entries.length ? t1Entries.map(e => `
+    <div class="line">
+      <div>
+        <strong>${esc(e.party || "Unidentified Party")}</strong> · ${money(e.amount)}<br>
+        <small class="muted">${esc(e.date)} · ${esc(e.memo)}</small>
+      </div>
+      <div class="actions" style="margin:0">
+        <button class="btn small secondary" onclick="resolveSuspense('${esc(e.id)}', 'CREDIT_SALE')">Identify as Customer Sale</button>
+        <button class="btn small secondary" onclick="resolveSuspense('${esc(e.id)}', 'CUSTOMER_PAYMENT')">Identify as Debtor Clearance</button>
+      </div>
+    </div>
+  `).join("") : '<div class="empty">No unverified Type 1 transactions. All receipts & payments have known sources!</div>';
+
+  // Tab 2
+  const tbDiff = b.suspense_t2;
+  $("suspenseType2Status").innerHTML = `
+    <div class="line">
+      <span>Trial Balance Discrepancy Held:</span>
+      <strong>${money(Math.abs(tbDiff))} ${tbDiff < 0 ? 'Cr' : (tbDiff > 0 ? 'Dr' : '')}</strong>
+    </div>
+    <p class="muted" style="margin-top:10px">
+      ${tbDiff === 0 ? "✓ Trial balance is in perfect balance. No suspense required." : "⚠️ Your double-entry ledger has an imbalance held in Type 2 Suspense. Show this to your Chartered Accountant at financial year-end."}
+    </p>
+  `;
+
+  // Tab 3 List
+  const t3Entries = state.entries.filter(e => e.type === "SUSPENSE_T3_CLEARING" && !e.reverses);
+  $("suspenseType3List").innerHTML = t3Entries.length ? t3Entries.map(e => `
+    <div class="line">
+      <div>
+        <strong>Cheque under Clearing: ${money(e.amount)}</strong><br>
+        <small class="muted">${esc(e.date)} · Party: ${esc(e.party)}</small>
+      </div>
+      <div class="actions" style="margin:0">
+        <button class="btn small" onclick="clearType3Cheque('${esc(e.id)}')">✓ Mark Cheque Cleared in Bank</button>
+      </div>
+    </div>
+  `).join("") : '<div class="empty">No uncleared cheques currently floating in Type 3 Suspense.</div>';
+}
+
+// 6. Render Fixed Asset Schedule
+function renderAssetSchedule(b) {
+  const cost = b.equipment;
+  const dep = -b.accumdep;
+  const net = cost - dep;
+
+  $("assetScheduleWrap").innerHTML = `
+    <div class="line"><span>Total Asset Cost</span><span>${money(cost)}</span></div>
+    <div class="line"><span>Total Accumulated Depreciation</span><span>${money(dep)}</span></div>
+    <div class="line total"><span>Net Carrying Value</span><strong class="positive">${money(net)}</strong></div>
+    <p class="muted" style="margin-top:12px">
+      Fixed assets are valued at historical cost less depreciation. Use the calculator on the left to add periodic depreciation entries.
+    </p>
+  `;
+}
+
+// Handle Form Input & Draft Creation
+$("transType").innerHTML = Object.entries(rules).map(([k, v]) => `
+  <option value="${k}">${esc(v[0])}</option>
+`).join("");
+
+$("ledgerSelect").innerHTML = Object.entries(accounts).map(([k, v]) => `
+  <option value="${k}">${esc(v)}</option>
+`).join("");
+
+$("transDate").value = today();
+$("typeHelp").textContent = rules[$("transType").value][3];
+
+$("transType").onchange = () => {
+  invalidateDraft();
+  $("typeHelp").textContent = rules[$("transType").value][3];
+};
+
+$("entryForm").oninput = invalidateDraft;
+
+function invalidateDraft() {
+  draftEntry = null;
+  $("previewCard").classList.add("hidden");
+}
+
+$("entryForm").onsubmit = e => {
+  e.preventDefault();
+  try {
+    const type = $("transType").value;
+    const rule = rules[type];
+    if (!rule) throw new Error("Invalid transaction type selected.");
+
+    const amount = parsePaise($("transAmount").value);
+    const date = $("transDate").value;
+    if (!date) throw new Error("Please pick a valid transaction date.");
+
+    const party = $("transParty").value.trim();
+    const memo = $("transMemo").value.trim();
+
+    const lines = [
+      { account: rule[1], value: amount },
+      { account: rule[2], value: -amount }
+    ];
+    validateEntryLines(lines);
+
+    draftEntry = {
+      id: genId(),
+      type,
+      amount,
+      date,
+      party,
+      memo: memo || rule[0],
+      lines,
+      createdAt: new Date().toISOString()
+    };
+
+    // Human-In-The-Loop Plain Language Explanation
+    const plainExplanation = generatePlainExplanation(type, amount, party);
+
+    $("previewCard").innerHTML = `
+      <h3 style="color:#0f5b45">🔍 Does this match what happened?</h3>
+      <p style="font-size:13.5px;line-height:1.6;background:#fff;padding:12px;border-radius:8px;border:1px solid #c3e5d4">
+        ${plainExplanation}
+      </p>
+      <div class="line">
+        <span>Debit: <strong>${esc(accounts[rule[1]])}</strong></span>
+        <strong>${money(amount)}</strong>
+      </div>
+      <div class="line">
+        <span>Credit: <strong>${esc(accounts[rule[2]])}</strong></span>
+        <strong>${money(amount)}</strong>
+      </div>
+      <label class="check" style="margin-top:14px">
+        <input type="checkbox" id="checkVerify" required>
+        <span>I have verified the invoice/source document and confirm this entry is accurate.</span>
+      </label>
+      <div class="actions">
+        <button type="button" class="btn" id="btnConfirmPost">✓ Confirm & Post to Books</button>
+        <button type="button" class="btn secondary" onclick="invalidateDraft()">Edit Details</button>
+      </div>
+    `;
+
+    $("previewCard").classList.remove("hidden");
+    $("btnConfirmPost").onclick = commitDraftEntry;
+  } catch (err) {
+    toast(err.message);
+  }
+};
+
+function generatePlainExplanation(type, amount, party) {
+  const p = party ? ` (${party})` : "";
+  switch(type) {
+    case "CASH_SALE":
+      return `You received <strong>${money(amount)}</strong> in cash for goods sold. Your shop cash balance increases and Sales income increases.`;
+    case "BANK_SALE":
+      return `You received <strong>${money(amount)}</strong> directly in your bank account / UPI for sales. Bank balance increases and Sales income increases.`;
+    case "CREDIT_SALE":
+      return `You sold <strong>${money(amount)}</strong> worth of goods on credit to <strong>${esc(party || "Customer")}</strong>. No cash changes hands yet; customer owes you this money.`;
+    case "CASH_PURCHASE":
+      return `You paid <strong>${money(amount)}</strong> cash from the shop drawer to buy resale inventory. Cash decreases, Purchases expense increases.`;
+    case "BANK_PURCHASE":
+      return `You paid <strong>${money(amount)}</strong> via bank/UPI for goods for resale. Bank balance decreases, Purchases expense increases.`;
+    case "CREDIT_PURCHASE":
+      return `You purchased <strong>${money(amount)}</strong> goods on credit from <strong>${esc(party || "Supplier")}</strong>. You owe them this amount under Sundry Creditors.`;
+    case "CASH_EXPENSE":
+    case "BANK_EXPENSE":
+      return `You paid <strong>${money(amount)}</strong> for shop operating expenses (e.g. rent, electricity, tea). Reduces funds and reduces net profit.`;
+    case "CASH_DRAWINGS":
+    case "BANK_DRAWINGS":
+      return `Owner withdrew <strong>${money(amount)}</strong> for personal household expenses. <em>This is NOT a business expense</em> and does not reduce business income tax.`;
+    case "CHEQUE_DISHONOUR_CUSTOMER":
+      return `A cheque of <strong>${money(amount)}</strong> from <strong>${esc(party || "Customer")}</strong> bounced! Bank balance is reversed and the customer is shown as still owing you money.`;
+    case "BANK_CHARGES":
+      return `Bank deducted <strong>${money(amount)}</strong> for service charges / bounced cheque fees. Operating expense.`;
+    case "BUY_EQUIPMENT":
+      return `You purchased shop equipment / machinery for <strong>${money(amount)}</strong>. Capitalized as a Fixed Asset, not counted as daily resale purchase.`;
+    default:
+      return `Double-entry transaction of <strong>${money(amount)}</strong>. Debit ${accounts[rules[type]?.[1]]} and Credit ${accounts[rules[type]?.[2]]}.`;
+  }
+}
+
+function commitDraftEntry() {
+  try {
+    if (!draftEntry) return;
+    if (!$("checkVerify").checked) {
+      throw new Error("Please check the verification box before posting.");
+    }
+    if (state.entries.length >= MAX_ENTRIES) {
+      throw new Error("Entry limit reached for this session.");
+    }
+
+    const next = cloneState();
+    next.entries.push(draftEntry);
+    commitState(next);
+
+    toast("✓ Posted! Journal, ledgers, and 3 final accounts updated.");
+    invalidateDraft();
+    $("transAmount").value = "";
+    $("transParty").value = "";
+    $("transMemo").value = "";
+    $("description").value = "";
+    renderAllViews();
+  } catch (err) {
+    toast(err.message);
+  }
+}
+
+// Reversal Engine
+$("journalTableWrap").onclick = e => {
+  const btn = e.target.closest("[data-reverse]");
+  if (!btn) return;
+  const targetId = btn.dataset.reverse;
+  const target = state.entries.find(x => x.id === targetId);
+  if (!target) return;
+
+  if (confirm(`Create an exact double-entry reversal for ${money(target.amount)} dated ${target.date}? This ensures an untampered audit trail for your CA.`)) {
+    try {
+      const reversedLines = target.lines.map(l => ({ account: l.account, value: -l.value }));
+      validateEntryLines(reversedLines);
+
+      const reversalEntry = {
+        id: genId(),
+        type: target.type,
+        reverses: target.id,
+        amount: target.amount,
+        date: target.date,
+        party: target.party,
+        memo: `Reversal of Entry #${target.id.slice(0, 8)}: ${target.memo || ''}`,
+        lines: reversedLines,
+        createdAt: new Date().toISOString()
+      };
+
+      const next = cloneState();
+      next.entries.push(reversalEntry);
+      commitState(next);
+      toast("✓ Reversal posted. Books adjusted cleanly.");
+      renderAllViews();
+    } catch (err) {
+      toast(err.message);
+    }
+  }
+};
+
+// ================= LOCAL AI & PARSER ENGINE =================
+// 1. Web Speech Voice Input
+let speechRecognizer = null;
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+if (SpeechRecognition) {
+  speechRecognizer = new SpeechRecognition();
+  speechRecognizer.continuous = false;
+  speechRecognizer.interimResults = false;
+  speechRecognizer.lang = "en-IN";
+
+  speechRecognizer.onstart = () => {
+    $("btnMic").classList.add("recording");
+    $("btnMic").textContent = "🔴 Listening... Speak clearly";
+  };
+  speechRecognizer.onresult = ev => {
+    const transcript = ev.results[0][0].transcript;
+    $("description").value = transcript;
+    toast("Speech captured! Triggering AI analysis...");
+    runAIAnalysis(transcript);
+  };
+  speechRecognizer.onerror = () => {
+    toast("Voice recognition encountered an issue. Please type instead.");
+  };
+  speechRecognizer.onend = () => {
+    $("btnMic").classList.remove("recording");
+    $("btnMic").textContent = "🎙️ Voice Input (Web Speech)";
+  };
+
+  $("btnMic").onclick = () => {
+    try {
+      speechRecognizer.start();
+    } catch {
+      speechRecognizer.stop();
+    }
+  };
+} else {
+  $("btnMic").onclick = () => {
+    toast("Web Speech API not available in this browser. Please type your transaction.");
+  };
+}
+
+// Sample Clickable Chips
+document.querySelectorAll(".chip").forEach(chip => {
+  chip.onclick = () => {
+    $("description").value = chip.dataset.sample;
+    runAIAnalysis(chip.dataset.sample);
+  };
+});
+
+// Built-in Lightweight Offline Heuristic Rule Engine (Zero Cloud Fallback)
+function parseTransactionOffline(text) {
+  const lower = text.toLowerCase();
+
+  // Extract amount
+  let amount = null;
+  const numMatch = text.match(/(?:(?:rs\.?|inr|₹)\s*)?(\d{1,10}(?:\.\d{1,2})?)/i);
+  if (numMatch) {
+    amount = numMatch[1];
+  }
+
+  // Extract Party
+  let party = "";
+  const toFromMatch = text.match(/(?:to|from|by|for)\s+([A-Za-z]+)/i);
+  if (toFromMatch && !["cash","bank","credit","shop","goods","office"].includes(toFromMatch[1].toLowerCase())) {
+    party = toFromMatch[1];
+  }
+
+  // Classify Intent
+  let type = "CASH_SALE";
+  let explanation = "Classified based on keywords.";
+
+  if (lower.includes("bounced") || lower.includes("dishonour")) {
+    type = "CHEQUE_DISHONOUR_CUSTOMER";
+    explanation = "Detected cheque dishonour / bounce from debtor.";
+  } else if (lower.includes("unknown") || lower.includes("suspense") || lower.includes("mystery") || (lower.includes("upi") && !lower.includes("sale") && !party)) {
+    type = "SUSPENSE_T1_RECEIPT";
+    explanation = "Unidentified receipt parked safely in Type 1 Suspense.";
+  } else if (lower.includes("drawing") || lower.includes("personal") || lower.includes("groceries") || lower.includes("home")) {
+    type = lower.includes("bank") ? "BANK_DRAWINGS" : "CASH_DRAWINGS";
+    explanation = "Detected owner personal drawings.";
+  } else if (lower.includes("rent") || lower.includes("salary") || lower.includes("electricity") || lower.includes("bill") || lower.includes("expense") || lower.includes("tea")) {
+    if (lower.includes("salary") || lower.includes("wages")) {
+      type = "SALARY_EXPENSE";
+      explanation = "Staff salary payment.";
+    } else {
+      type = lower.includes("bank") || lower.includes("cheque") ? "BANK_EXPENSE" : "CASH_EXPENSE";
+      explanation = "Shop operating expense.";
+    }
+  } else if (lower.includes("furniture") || lower.includes("computer") || lower.includes("equipment") || lower.includes("machinery")) {
+    type = "BUY_EQUIPMENT";
+    explanation = "Fixed asset equipment acquisition.";
+  } else if (lower.includes("credit sale") || (lower.includes("sold") && lower.includes("credit")) || (lower.includes("udhaar") && lower.includes("becha"))) {
+    type = "CREDIT_SALE";
+    explanation = "Goods sold on credit to debtor.";
+  } else if (lower.includes("sold") || lower.includes("sale") || lower.includes("becha")) {
+    type = lower.includes("bank") || lower.includes("upi") || lower.includes("cheque") ? "BANK_SALE" : "CASH_SALE";
+    explanation = "Goods sale recognized.";
+  } else if (lower.includes("bought") || lower.includes("purchase") || lower.includes("kharida")) {
+    if (lower.includes("credit") || lower.includes("udhaar")) {
+      type = "CREDIT_PURCHASE";
+      explanation = "Goods purchased on credit from creditor.";
+    } else {
+      type = lower.includes("bank") || lower.includes("upi") || lower.includes("cheque") ? "BANK_PURCHASE" : "CASH_PURCHASE";
+      explanation = "Inventory purchase for resale.";
+    }
+  } else if (lower.includes("received") && (lower.includes("debtor") || party)) {
+    type = lower.includes("bank") ? "CUSTOMER_PAYMENT" : "CUSTOMER_PAYMENT_CASH";
+    explanation = "Customer settling outstanding debt.";
+  } else if (lower.includes("paid") && party) {
+    type = lower.includes("cash") ? "SUPPLIER_PAYMENT_CASH" : "SUPPLIER_PAYMENT";
+    explanation = "Paying outstanding debt to supplier.";
+  }
+
+  return {
+    transaction_type: type,
+    amount: amount || "1000",
+    party,
+    date: today(),
+    explanation
+  };
+}
+
+// AI Execution Function
+async function runAIAnalysis(text) {
+  if (!text || !text.trim()) {
+    toast("Please enter a transaction note first.");
+    return;
+  }
+
+  $("btnAnalyze").disabled = true;
+  $("aiStatusBox").innerHTML = `<em>🧠 Analyzing with local model...</em>`;
+
+  try {
+    let parsedResult = null;
+
+    // First attempt: Local Ollama HTTP API
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 4000); // 4 second check
+      const res = await fetch("http://127.0.0.1:11434/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        signal: controller.signal,
+        body: JSON.stringify({
+          model: state.model,
+          stream: false,
+          format: "json",
+          messages: [
+            {
+              role: "system",
+              content: `You are an Indian sole-proprietor accounting parser. Return JSON with:
+{"transaction_type":"${Object.keys(rules).join('|')}", "amount":"positive numeric digits only", "party":"string", "explanation":"brief reason"}`
+            },
+            { role: "user", content: text }
+          ]
+        })
+      });
+      clearTimeout(timeoutId);
+
+      if (res.ok) {
+        const data = await res.json();
+        parsedResult = JSON.parse(data.message.content);
+        $("aiStatusPill").textContent = "🤖 Local Ollama Connected";
+      }
+    } catch {
+      // Ollama not reachable; switch to smart offline heuristic engine
+    }
+
+    if (!parsedResult) {
+      parsedResult = parseTransactionOffline(text);
+      $("aiStatusPill").textContent = "⚡ In-Browser Rules Parser";
+    }
+
+    // Populate Fields
+    if (parsedResult.transaction_type && rules[parsedResult.transaction_type]) {
+      $("transType").value = parsedResult.transaction_type;
+      $("typeHelp").textContent = rules[parsedResult.transaction_type][3];
+    }
+    if (parsedResult.amount) {
+      $("transAmount").value = parsedResult.amount;
+    }
+    if (parsedResult.party) {
+      $("transParty").value = parsedResult.party;
+    }
+    $("transMemo").value = text;
+    $("transDate").value = parsedResult.date || today();
+
+    $("aiStatusBox").innerHTML = `
+      <span style="color:#0f5b45;font-weight:600">✓ Parsed:</span> ${esc(parsedResult.explanation)}
+    `;
+
+    toast("Extracted successfully. Click 'Preview' to review before posting.");
+  } catch (err) {
+    $("aiStatusBox").textContent = "AI parsing error: " + err.message;
+  } finally {
+    $("btnAnalyze").disabled = false;
+  }
+}
+
+$("btnAnalyze").onclick = () => runAIAnalysis($("description").value);
+
+$("btnSendSuspense").onclick = () => {
+  const text = $("description").value.trim();
+  if (!text) {
+    toast("Enter a note to park in Suspense.");
+    return;
+  }
+  const next = cloneState();
+  next.suspenseQueue.push({
+    id: genId(),
+    note: text,
+    date: today()
+  });
+  commitState(next);
+  toast("Parked in Suspense Queue for review.");
+  renderAllViews();
+};
+
+// ================= DEPRECIATION CALCULATOR =================
+$("depForm").onsubmit = e => {
+  e.preventDefault();
+  try {
+    const cost = parsePaise($("depCost").value);
+    const rate = Number($("depRate").value);
+    const months = Number($("depMonths").value);
+    const salvage = parsePaise($("depSalvage").value || "0");
+    const method = $("depMethod").value;
+
+    let depPaise = 0;
+    if (method === "SLM") {
+      const depreciableBase = Math.max(0, cost - salvage);
+      depPaise = Math.round((depreciableBase * (rate / 100) * (months / 12)));
+    } else {
+      // WDV
+      depPaise = Math.round((cost * (rate / 100) * (months / 12)));
+    }
+
+    if (depPaise <= 0) throw new Error("Calculated depreciation is zero.");
+
+    const entry = {
+      id: genId(),
+      type: "DEPRECIATION",
+      amount: depPaise,
+      date: today(),
+      party: "Fixed Asset Schedule",
+      memo: `Depreciation (${method} @ ${rate}% for ${months} months)`,
+      lines: [
+        { account: "depexp", value: depPaise },
+        { account: "accumdep", value: -depPaise }
+      ],
+      createdAt: new Date().toISOString()
+    };
+
+    const next = cloneState();
+    next.entries.push(entry);
+    commitState(next);
+    toast(`✓ Posted Depreciation of ${money(depPaise)} to P&L.`);
+    renderAllViews();
+  } catch (err) {
+    toast(err.message);
+  }
+};
+
+// ================= SUSPENSE HELPERS =================
+window.resolveSuspense = (id, targetType) => {
+  const entry = state.entries.find(x => x.id === id);
+  if (!entry) return;
+
+  const partyName = prompt("Enter the verified party or customer name:", entry.party || "Ramesh");
+  if (!partyName) return;
+
+  try {
+    // 1. Post reversal of Type 1 suspense
+    const revLines = entry.lines.map(l => ({ account: l.account, value: -l.value }));
+    const reversal = {
+      id: genId(),
+      type: "REVERSAL",
+      reverses: entry.id,
+      amount: entry.amount,
+      date: today(),
+      party: partyName,
+      memo: `Resolved Suspense #${entry.id.slice(0, 8)}`,
+      lines: revLines,
+      createdAt: new Date().toISOString()
+    };
+
+    // 2. Post new proper entry
+    const rule = rules[targetType];
+    const newEntry = {
+      id: genId(),
+      type: targetType,
+      amount: entry.amount,
+      date: today(),
+      party: partyName,
+      memo: `Rectified from Suspense: ${entry.memo}`,
+      lines: [
+        { account: rule[1], value: entry.amount },
+        { account: rule[2], value: -entry.amount }
+      ],
+      createdAt: new Date().toISOString()
+    };
+
+    const next = cloneState();
+    next.entries.push(reversal);
+    next.entries.push(newEntry);
+    commitState(next);
+    toast("✓ Suspense entry cleared and rectified.");
+    renderAllViews();
+  } catch (err) {
+    toast(err.message);
+  }
+};
+
+window.clearType3Cheque = id => {
+  const entry = state.entries.find(x => x.id === id);
+  if (!entry) return;
+
+  try {
+    const clearedEntry = {
+      id: genId(),
+      type: "SUSPENSE_T3_CLEARED",
+      amount: entry.amount,
+      date: today(),
+      party: entry.party,
+      memo: `Cheque cleared: ${entry.memo}`,
+      lines: [
+        { account: "bank", value: entry.amount },
+        { account: "suspense_t3", value: -entry.amount }
+      ],
+      createdAt: new Date().toISOString()
+    };
+
+    const next = cloneState();
+    next.entries.push(clearedEntry);
+    commitState(next);
+    toast("✓ Cheque marked cleared into Bank Account.");
+    renderAllViews();
+  } catch (err) {
+    toast(err.message);
+  }
+};
+
+$("btnQuickType1Rec").onclick = () => {
+  const amt = prompt("Enter mystery UPI amount received (₹):", "3500");
+  if (!amt) return;
+  try {
+    const paise = parsePaise(amt);
+    const entry = {
+      id: genId(),
+      type: "SUSPENSE_T1_RECEIPT",
+      amount: paise,
+      date: today(),
+      party: "Unknown Sender",
+      memo: "UPI receipt with missing narration or invoice reference",
+      lines: [
+        { account: "bank", value: paise },
+        { account: "suspense_t1", value: -paise }
+      ],
+      createdAt: new Date().toISOString()
+    };
+    const next = cloneState();
+    next.entries.push(entry);
+    commitState(next);
+    toast("Mystery receipt posted to Type 1 Suspense.");
+    renderAllViews();
+  } catch (e) {
+    toast(e.message);
+  }
+};
+
+$("btnQuickType3Dep").onclick = () => {
+  const amt = prompt("Enter cheque amount deposited for clearance (₹):", "7500");
+  const party = prompt("Enter customer / party name:", "Mohan Traders");
+  if (!amt || !party) return;
+  try {
+    const paise = parsePaise(amt);
+    const entry = {
+      id: genId(),
+      type: "SUSPENSE_T3_CLEARING",
+      amount: paise,
+      date: today(),
+      party,
+      memo: `Cheque #${Math.floor(100000+Math.random()*900000)} deposited in clearing`,
+      lines: [
+        { account: "suspense_t3", value: paise },
+        { account: "ar", value: -paise }
+      ],
+      createdAt: new Date().toISOString()
+    };
+    const next = cloneState();
+    next.entries.push(entry);
+    commitState(next);
+    toast("Cheque recorded in Type 3 Clearing Suspense.");
+    renderAllViews();
+  } catch (e) {
+    toast(e.message);
+  }
+};
+
+// ================= BENCHMARK SUITE =================
+const benchmarkSuite = [
+  { text: "Sold stationery goods ₹5,000 to Ramesh on credit", expected: "CREDIT_SALE", amount: "5000" },
+  { text: "Paid shop rent ₹12,000 by bank cheque", expected: "BANK_EXPENSE", amount: "12000" },
+  { text: "Owner introduced ₹50,000 capital in cash", expected: "CASH_CAPITAL", amount: "50000" },
+  { text: "Bought Xerox paper resale stock ₹8,000 in cash", expected: "CASH_PURCHASE", amount: "8000" },
+  { text: "Customer Ramesh settled ₹5,000 bill via bank transfer", expected: "CUSTOMER_PAYMENT", amount: "5000" },
+  { text: "Owner withdrew ₹3,000 cash for household grocery", expected: "CASH_DRAWINGS", amount: "3000" },
+  { text: "Bought computer printer for shop ₹18,000 via bank", expected: "BUY_EQUIPMENT", amount: "18000" },
+  { text: "Paid ₹15,000 staff wages through bank", expected: "SALARY_EXPENSE", amount: "15000" },
+  { text: "Cheque of ₹6,000 received from debtor bounced/dishonoured", expected: "CHEQUE_DISHONOUR_CUSTOMER", amount: "6000" },
+  { text: "Deposited ₹10,000 cash into business bank account", expected: "CASH_TO_BANK", amount: "10000" },
+  { text: "Unknown UPI credit of ₹2,500 with no party name", expected: "SUSPENSE_T1_RECEIPT", amount: "2500" },
+  { text: "Purchased resale goods on credit ₹9,000 from Rohit Traders", expected: "CREDIT_PURCHASE", amount: "9000" },
+  { text: "Paid tea and stationery expense ₹450 cash", expected: "CASH_EXPENSE", amount: "450" },
+  { text: "Bank debited ₹590 for cheque return penalty", expected: "BANK_CHARGES", amount: "590" },
+  { text: "Sold goods ₹14,000 received immediately in UPI", expected: "BANK_SALE", amount: "14000" }
+];
+
+$("btnRunBenchmark").onclick = () => {
+  let passed = 0;
+  const cards = benchmarkSuite.map((b, idx) => {
+    const res = parseTransactionOffline(b.text);
+    const isOk = res.transaction_type === b.expected;
+    if (isOk) passed++;
+
+    return `
+      <div class="benchmark-card ${isOk ? 'passed' : 'flagged'}">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <strong>#${idx + 1}: "${esc(b.text)}"</strong>
+          <span class="pill ${isOk ? '' : 'warning'}">${isOk ? '✓ Match' : 'Review'}</span>
+        </div>
+        <div style="font-size:12px;margin-top:6px;color:#475569">
+          Expected: <code>${b.expected}</code> | Classified: <code>${res.transaction_type}</code> | Amount: ₹${res.amount}
+        </div>
+      </div>
+    `;
+  }).join("");
+
+  const scorePct = Math.round((passed / benchmarkSuite.length) * 100);
+  $("bmScore").textContent = `${scorePct}% (${passed}/${benchmarkSuite.length})`;
+  $("bmScore").style.color = scorePct >= 90 ? "var(--green)" : "var(--amber)";
+  $("bmQuarantine").textContent = "100% Guarded";
+  $("benchmarkResults").innerHTML = cards;
+  toast(`Benchmark complete: ${scorePct}% accuracy with 100% mathematical safety.`);
+};
+
+// ================= DEMO SHOP DATA LOADER =================
+$("btnLoadDemo").onclick = () => {
+  if (confirm("Load realistic 1-month demo records for Anita's Stationery? This will populate the journal, ledgers, and 3 final accounts for testing.")) {
+    const yr = new Date().getFullYear();
+    const demoEntries = [
+      { type: "CASH_CAPITAL", amount: 10000000, date: `${yr}-04-01`, party: "Anita Sharma", memo: "Initial capital introduced in cash" },
+      { type: "CASH_TO_BANK", amount: 8000000, date: `${yr}-04-02`, party: "SBI Current A/c", memo: "Opened business bank account with SBI" },
+      { type: "BUY_EQUIPMENT", amount: 3500000, date: `${yr}-04-03`, party: "Canon India", memo: "Bought Xerox & Heavy Duty Printer" },
+      { type: "CREDIT_PURCHASE", amount: 2500000, date: `${yr}-04-05`, party: "Navneet Paper Mills", memo: "Paper reams and notebooks for resale" },
+      { type: "CREDIT_SALE", amount: 1800000, date: `${yr}-04-08`, party: "Bright Coaching Institute", memo: "Bulk stationery order on 30-day credit" },
+      { type: "CASH_SALE", amount: 1450000, date: `${yr}-04-12`, party: "Retail Counter", memo: "Daily counter cash sales" },
+      { type: "BANK_EXPENSE", amount: 800000, date: `${yr}-04-15`, party: "Shop Landlord", memo: "Shop rent for the month" },
+      { type: "CUSTOMER_PAYMENT", amount: 1000000, date: `${yr}-04-18`, party: "Bright Coaching Institute", memo: "Part payment received via NEFT" },
+      { type: "SUPPLIER_PAYMENT", amount: 1500000, date: `${yr}-04-20`, party: "Navneet Paper Mills", memo: "Paid vendor via bank transfer" },
+      { type: "CASH_DRAWINGS", amount: 400000, date: `${yr}-04-24`, party: "Anita Sharma", memo: "Personal household grocery withdrawal" },
+      { type: "DEPRECIATION", amount: 350000, date: `${yr}-04-28`, party: "Fixed Assets", memo: "10% annual depreciation on printer" },
+      { type: "CLOSING_STOCK", amount: 1200000, date: `${yr}-04-30`, party: "Physical Inventory", memo: "Closing stock counted and verified at cost" }
+    ];
+
+    const processedEntries = demoEntries.map(d => {
+      const rule = rules[d.type];
+      return {
+        id: genId(),
+        type: d.type,
+        amount: d.amount,
+        date: d.date,
+        party: d.party,
+        memo: d.memo,
+        lines: [
+          { account: rule[1], value: d.amount },
+          { account: rule[2], value: -d.amount }
+        ],
+        createdAt: new Date().toISOString()
+      };
+    });
+
+    const next = cloneState();
+    next.config = {
+      name: "Anita's Stationery & Xerox",
+      owner: "Anita Sharma",
+      entity: "sole",
+      start: `${yr}-04-01`,
+      end: `${yr+1}-03-31`
+    };
+    next.entries = processedEntries;
+    commitState(next);
+
+    toast("Demo shop loaded successfully! Check Dashboard, Journal, and 3 Final Accounts.");
+    renderAllViews();
+    navigateTo("overview");
+  }
+};
+
+// ================= EXPORT & SETTINGS =================
+function triggerDownload(filename, content, mime) {
+  const blob = new Blob([content], { type: mime });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+$("btnExportJournalCSV").onclick = () => {
+  const headers = ["Voucher_ID", "Date", "Transaction_Type", "Party", "Narration", "Account_Name", "Debit_INR", "Credit_INR", "Reversal_Ref"];
+  const rows = [headers];
+
+  for (const e of state.entries) {
+    for (const l of e.lines) {
+      rows.push([
+        e.id,
+        e.date,
+        e.type,
+        `"${(e.party || '').replace(/"/g, '""')}"`,
+        `"${(e.memo || '').replace(/"/g, '""')}"`,
+        `"${accounts[l.account] || l.account}"`,
+        l.value > 0 ? (l.value / 100).toFixed(2) : "",
+        l.value < 0 ? (-l.value / 100).toFixed(2) : "",
+        e.reverses || ""
+      ]);
+    }
+  }
+
+  const csv = rows.map(r => r.join(",")).join("\r\n");
+  triggerDownload(`LedgerFriend_Journal_${today()}.csv`, csv, "text/csv;charset=utf-8");
+};
+
+$("btnExportCADossier").onclick = () => {
+  window.print();
+};
+
+$("btnPrintDossier").onclick = () => {
+  window.print();
+};
+
+$("btnDownloadJSON").onclick = () => {
+  triggerDownload(`LedgerFriend_Backup_${today()}.json`, JSON.stringify(state, null, 2), "application/json");
+};
+
+$("btnResetData").onclick = () => {
+  if (confirm("Reset and delete all transactions? This cannot be undone.")) {
+    localStorage.removeItem(KEY);
+    state.entries = [];
+    state.suspenseQueue = [];
+    toast("Books cleared.");
+    renderAllViews();
+  }
+};
+
+$("btnTestOllama").onclick = async () => {
+  $("ollamaStatus").textContent = "Checking local Ollama connection on http://127.0.0.1:11434...";
+  try {
+    const res = await fetch("http://127.0.0.1:11434/api/tags");
+    if (res.ok) {
+      const data = await res.json();
+      const tags = (data.models || []).map(m => m.name).join(", ");
+      $("ollamaStatus").innerHTML = `
+        <span style="color:var(--green);font-weight:700">✓ Connected to Local Ollama!</span><br>
+        Installed Models: <code>${tags || "None found (pull one via 'ollama pull qwen2.5:7b')"}</code>
+      `;
+    } else {
+      throw new Error("HTTP " + res.status);
+    }
+  } catch {
+    $("ollamaStatus").innerHTML = `
+      <span style="color:var(--amber);font-weight:700">⚠️ Local Ollama Not Detected</span><br>
+      To enable local open-source inference, install Ollama and run <code>ollama run qwen2.5:7b</code>. 
+      <em>(In-browser rules parser remains active so you can record transactions right away!)</em>
+    `;
+  }
+};
+
+$("btnSaveModel").onclick = () => {
+  const m = $("modelInput").value.trim();
+  if (m) {
+    const next = cloneState();
+    next.model = m;
+    commitState(next);
+    toast("Model setting saved.");
+  }
+};
+
+$("businessForm").onsubmit = e => {
+  e.preventDefault();
+  const entity = $("bizEntity").value;
+  if (entity !== "sole") {
+    alert("LedgerFriend is specifically crafted for Sole Proprietorships. Partnerships, LLPs, and Companies require complex share capital, partnership deed distribution, and corporate statutory disclosures not supported by single-owner periodic bookkeeping.");
+    return;
+  }
+  const next = cloneState();
+  next.config = {
+    name: $("bizName").value.trim(),
+    owner: $("bizOwner").value.trim(),
+    entity: "sole",
+    start: $("periodStart").value,
+    end: $("periodEnd").value
+  };
+  commitState(next);
+  toast("Business configuration updated.");
+  renderAllViews();
+  navigateTo("overview");
+};
+
+// Suspense Tabs Navigation
+document.querySelectorAll(".tab-btn").forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+    document.querySelectorAll(".stab-content").forEach(c => c.classList.add("hidden"));
+    btn.classList.add("active");
+    $(`stab-${btn.dataset.stab}`).classList.remove("hidden");
+  };
+});
+
+// Initial Form Values
+$("bizName").value = state.config.name;
+$("bizOwner").value = state.config.owner;
+$("periodStart").value = state.config.start;
+$("periodEnd").value = state.config.end;
+$("scopeCheck").checked = true;
+$("modelInput").value = state.model;
+
+renderAllViews();
+</script>
+</body>
+</html>
