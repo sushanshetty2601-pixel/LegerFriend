@@ -187,9 +187,9 @@ I used AI assistance to explore the idea, generate and revise code, and troubles
 
 Tools used during the development process included:
 
-- **ChatGPT and Claude:** ideation, implementation guidance, and debugging assistance.
-- **Antigravity:** [Add the specific development work you used it for.]
 - **Backboard:** [Add the exact API, agent, model-comparison, or other workflow you actually used.]
+- **Antigravity:** [Add the specific development work you used it for.]
+- **ChatGPT and Claude:** ideation, implementation guidance, and debugging assistance.
 
 Development assistance is distinct from the application’s runtime dependencies.
 
